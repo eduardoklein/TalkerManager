@@ -1,5 +1,5 @@
 const express = require('express');
-const { readTalker } = require('./utils/fsUtils');
+const { readTalker, findTalkerById } = require('./utils/fsUtils');
 
 const app = express();
 app.use(express.json());
@@ -10,6 +10,16 @@ const PORT = process.env.PORT || '3001';
 app.get('/talker', async (req, res) => {
   const responseData = await readTalker();
   return res.status(200).json(responseData);
+});
+
+app.get('/talker/:id', async (req, res) => {
+  const { id } = req.params;
+  const foundTalker = await findTalkerById(Number(id));
+
+  if (foundTalker === undefined) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  }
+  return res.status(200).json(foundTalker);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
