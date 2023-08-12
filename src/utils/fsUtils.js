@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const tokenGenerator = require('./tokenFunction');
 
 async function readTalker() {
   try {
@@ -18,7 +19,14 @@ async function findTalkerById(id) {
   return talker;
 }
 
+async function tokenSender(email, password) {
+  console.log(email, password);
+  const token = tokenGenerator();
+  return token;
+}
+
 module.exports = {
     readTalker,
     findTalkerById,
+    tokenSender,
 };
