@@ -7,6 +7,26 @@ app.use(express.json());
 const HTTP_OK_STATUS = 200;
 const PORT = process.env.PORT || '3001';
 
+const validateEmail = (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).send({ message: 'O campo "email" é obrigatório' });
+  } if (email.includes('@') && email.includes('.com') && email.indexOf('@') > 0) {
+    next();
+  }
+  return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' }); 
+};
+
+const validatePassword = (req, res, next) => {
+  const { password } = req.body;
+  if (!password) {
+    return res.status(400).send({ message: 'O campo "password" é obrigatório' });
+  } if (password.length >= 6) {
+    next();
+}
+  return res.status(400).send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+};
+
 app.get('/talker', async (req, res) => {
   const responseData = await readTalker();
   return res.status(200).json(responseData);
@@ -22,10 +42,9 @@ app.get('/talker/:id', async (req, res) => {
   return res.status(200).json(foundTalker);
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login', validateEmail, validatePassword, async (req, res) => {
   const { email, password } = req.body;
   const token = await tokenSender(email, password);
-  console.log(token);
   return res.status(200).json({ token });
 });
 
