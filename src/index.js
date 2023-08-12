@@ -12,7 +12,7 @@ const validateEmail = (req, res, next) => {
   if (!email) {
     return res.status(400).send({ message: 'O campo "email" é obrigatório' });
   } if (email.includes('@') && email.includes('.com') && email.indexOf('@') > 0) {
-    next();
+    return next();
   }
   return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' }); 
 };
@@ -21,9 +21,10 @@ const validatePassword = (req, res, next) => {
   const { password } = req.body;
   if (!password) {
     return res.status(400).send({ message: 'O campo "password" é obrigatório' });
-  } if (password.length >= 6) {
-    next();
+  } if (password.length > 5) {
+    return next();
 }
+  console.log(password.length);
   return res.status(400).send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
 };
 
