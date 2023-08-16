@@ -15,7 +15,7 @@ async function readTalker() {
 async function findTalkerById(id) {
   const data = await fs.readFile(path.resolve(__dirname, '../talker.json'));
   const dataParsed = JSON.parse(data);
-  const talker = dataParsed.find((element) => element.id === id);
+  const talker = dataParsed.find((element) => element.id === Number(id));
   return talker;
 }
 
@@ -32,9 +32,25 @@ async function addTalker(newTalker) {
   return newTalkerWithId;
 }
 
+async function editTalker(id, editedTalker) {
+  const oldTalkers = await readTalker();
+  const updatedTalker = { id, ...editedTalker };
+  const editedTalkers = oldTalkers.map((currentTalker) => {
+    if (currentTalker.id === updatedTalker.id) {
+      return updatedTalker;
+    }
+    return currentTalker;
+  });
+  const updatedData = JSON.stringify(editedTalkers);
+  await fs.writeFile(path.resolve(__dirname, '../talker.json'), updatedData);
+
+  return updatedTalker;
+}
+
 module.exports = {
     readTalker,
     findTalkerById,
     tokenSender,
     addTalker,
+    editTalker,
 };

@@ -2,7 +2,8 @@ const express = require('express');
 const { readTalker, 
   findTalkerById, 
   tokenSender, 
-  addTalker } = require('./utils/fsUtils');
+  addTalker,
+  editTalker } = require('./utils/fsUtils');
 const { 
   validateEmail, 
   validatePassword,   
@@ -55,6 +56,30 @@ validateRateValueOnPost, async (req, res) => {
   const talkerInfo = req.body;
   const returnTalker = await addTalker(talkerInfo);
   return res.status(201).json(returnTalker);
+});
+
+app.put('/talker/:id', validateToken, 
+validateNameOnPost, 
+validateAgeOnPost, 
+validateTalkOnPost,
+validateWatchedAtOnPost,
+validateDateFormat,
+validateRateOnPost,
+validateRateValueOnPost,
+ async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+  const talkerToEdit = await findTalkerById(id);
+  console.log(talkerToEdit);
+  if (!talkerToEdit) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  }
+  talkerToEdit.name = name;
+  talkerToEdit.age = age;
+  talkerToEdit.talk.watchedAt = talk.watchedAt;
+  talkerToEdit.talk.rate = talk.rate;
+  const talkerEdited = await editTalker(id, talkerToEdit);
+  return res.status(200).json(talkerEdited);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
