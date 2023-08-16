@@ -4,7 +4,8 @@ const { readTalker,
   tokenSender, 
   addTalker,
   editTalker,
-  deleteTalker } = require('./utils/fsUtils');
+  deleteTalker,
+  searchByName } = require('./utils/fsUtils');
 const { 
   validateEmail, 
   validatePassword,   
@@ -23,12 +24,13 @@ app.use(express.json());
 const HTTP_OK_STATUS = 200;
 const PORT = process.env.PORT || '3001';
 
-app.get('/talker', async (req, res) => {
-  const responseData = await readTalker();
-  return res.status(200).json(responseData);
-});
+app.get('/talker/search', validateToken, async (req, res) => {
+  const search = req.query.q;
+  const result = await searchByName(search);
+  return res.status(200).json(result);
+ });
 
-app.get('/talker/:id', async (req, res) => {
+ app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const foundTalker = await findTalkerById(Number(id));
 
@@ -36,6 +38,11 @@ app.get('/talker/:id', async (req, res) => {
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
   return res.status(200).json(foundTalker);
+});
+
+app.get('/talker', async (req, res) => {
+  const responseData = await readTalker();
+  return res.status(200).json(responseData);
 });
 
 app.post('/login', validateEmail, validatePassword, async (req, res) => {
@@ -86,7 +93,7 @@ validateRateValueOnPost,
 app.delete('/talker/:id', validateToken, async (req, res) => {
   const { id } = req.params;
   await deleteTalker(id);
-  return res.status(204).json({ message: 'Pessoa palestrante deletade com sucesso' });
+  return res.status(204).json({ message: 'Pessoa palestrante deletada com sucesso' });
 });
 
 // não remova esse endpoint, e para o avaliador funcionar

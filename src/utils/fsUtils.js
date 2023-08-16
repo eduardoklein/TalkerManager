@@ -56,6 +56,12 @@ async function deleteTalker(id) {
   await fs.writeFile(path.resolve(__dirname, DATA_PATH), updatedData);
 }
 
+async function searchByName(query) {
+  const talkers = await readTalker();
+  const searchResult = talkers.filter((currentTalker) => currentTalker.name.includes(query));
+  return searchResult;
+}
+
 module.exports = {
     readTalker,
     findTalkerById,
@@ -63,4 +69,5 @@ module.exports = {
     addTalker,
     editTalker,
     deleteTalker,
+    searchByName,
 };
