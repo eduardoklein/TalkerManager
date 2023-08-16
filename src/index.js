@@ -5,7 +5,7 @@ const { readTalker,
   addTalker,
   editTalker,
   deleteTalker,
-  searchByName } = require('./utils/fsUtils');
+  search } = require('./utils/fsUtils');
 const { 
   validateEmail, 
   validatePassword,   
@@ -16,7 +16,8 @@ const {
   validateWatchedAtOnPost,
   validateDateFormat,
   validateRateOnPost,
-  validateRateValueOnPost } = require('./utils/verificationMiddleware');
+  validateRateValueOnPost,
+  validateRateValueOnGet } = require('./utils/verificationMiddleware');
 
 const app = express();
 app.use(express.json());
@@ -24,9 +25,11 @@ app.use(express.json());
 const HTTP_OK_STATUS = 200;
 const PORT = process.env.PORT || '3001';
 
-app.get('/talker/search', validateToken, async (req, res) => {
-  const search = req.query.q;
-  const result = await searchByName(search);
+app.get('/talker/search', validateToken, validateRateValueOnGet, async (req, res) => {
+  const nameSearch = req.query.q;
+  const rateSearch = Number(req.query.rate);
+  const result = await search(nameSearch, rateSearch);
+  console.log(result);
   return res.status(200).json(result);
  });
 

@@ -103,6 +103,22 @@ const validateRateValueOnPost = (req, res, next) => {
   return next();
 };
 
+const validateRateValueOnGet = (req, res, next) => {
+  const { rate } = req.query;
+  console.log(rate);
+  if (!rate) {
+    console.log('Entrei no !rate do mid');
+    return next();
+  } 
+  const rateAsNumber = Number(rate);
+  if (rateAsNumber < 1 || rateAsNumber > 5 || !Number.isInteger(rateAsNumber)) {
+    console.log('Entrei no if de verificação do mid');
+  return res.status(400).send({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
+  }
+  console.log('Entrei no Next');
+  return next();
+};
+
 module.exports = {
   validateEmail,
   validatePassword,
@@ -114,4 +130,5 @@ module.exports = {
   validateDateFormat,
   validateRateOnPost,
   validateRateValueOnPost,
+  validateRateValueOnGet,
 };

@@ -56,9 +56,21 @@ async function deleteTalker(id) {
   await fs.writeFile(path.resolve(__dirname, DATA_PATH), updatedData);
 }
 
-async function searchByName(query) {
+async function search(name, rate) {
   const talkers = await readTalker();
-  const searchResult = talkers.filter((currentTalker) => currentTalker.name.includes(query));
+  console.log(name, rate);
+  if (!rate) {
+    console.log('Entrei no !rate');
+    const searchResult = talkers.filter((currentTalker) => currentTalker.name.includes(name));
+    return searchResult;
+  } if (!name) {
+    console.log('Entrei no !name');
+    const searchResult = talkers.filter((currentTalker) => currentTalker.talk.rate === rate);
+    return searchResult;
+  }
+  console.log('Entrei no both');
+  const searchResult = talkers.filter((currentTalker) => currentTalker.name.includes(name) 
+  && currentTalker.talk.rate === rate);
   return searchResult;
 }
 
@@ -69,5 +81,5 @@ module.exports = {
     addTalker,
     editTalker,
     deleteTalker,
-    searchByName,
+    search,
 };
