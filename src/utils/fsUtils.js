@@ -19,14 +19,22 @@ async function findTalkerById(id) {
   return talker;
 }
 
-async function tokenSender(email, password) {
-  console.log(email, password);
+async function tokenSender(__email, __password) {
   const token = tokenGenerator();
   return token;
+}
+
+async function addTalker(newTalker) {
+  const oldTalkers = await readTalker();
+  const newTalkerWithId = { ...newTalker, id: oldTalkers.length + 1 };
+  const newTalkers = JSON.stringify([...oldTalkers, newTalkerWithId]);
+  await fs.writeFile(path.resolve(__dirname, '../talker.json'), newTalkers);
+  return newTalkerWithId;
 }
 
 module.exports = {
     readTalker,
     findTalkerById,
     tokenSender,
+    addTalker,
 };

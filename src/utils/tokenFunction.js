@@ -10,11 +10,7 @@ function tokenGenerator() {
     const token = [];
     for (let i = 0; i <= 15; i += 1) {
         token[i] = lettersAndNumberArray[Math.floor(Math.random() * 57)];
-        console.log(token);
-        console.log(i);
     }
-    console.log(token);
-    console.log(token.length);
     return token.join('');
 }
 
