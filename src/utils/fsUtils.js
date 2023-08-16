@@ -2,9 +2,11 @@ const fs = require('fs').promises;
 const path = require('path');
 const tokenGenerator = require('./tokenFunction');
 
+const DATA_PATH = '../talker.json';
+
 async function readTalker() {
   try {
-    const data = await fs.readFile(path.resolve(__dirname, '../talker.json'));
+    const data = await fs.readFile(path.resolve(__dirname, DATA_PATH));
     const dataParsed = JSON.parse(data);
     return dataParsed;
   } catch (error) {
@@ -13,7 +15,7 @@ async function readTalker() {
 }
 
 async function findTalkerById(id) {
-  const data = await fs.readFile(path.resolve(__dirname, '../talker.json'));
+  const data = await fs.readFile(path.resolve(__dirname, DATA_PATH));
   const dataParsed = JSON.parse(data);
   const talker = dataParsed.find((element) => element.id === Number(id));
   return talker;
@@ -28,7 +30,7 @@ async function addTalker(newTalker) {
   const oldTalkers = await readTalker();
   const newTalkerWithId = { ...newTalker, id: oldTalkers.length + 1 };
   const newTalkers = JSON.stringify([...oldTalkers, newTalkerWithId]);
-  await fs.writeFile(path.resolve(__dirname, '../talker.json'), newTalkers);
+  await fs.writeFile(path.resolve(__dirname, DATA_PATH), newTalkers);
   return newTalkerWithId;
 }
 
@@ -42,7 +44,7 @@ async function editTalker(id, editedTalker) {
     return currentTalker;
   });
   const updatedData = JSON.stringify(editedTalkers);
-  await fs.writeFile(path.resolve(__dirname, '../talker.json'), updatedData);
+  await fs.writeFile(path.resolve(__dirname, DATA_PATH), updatedData);
 
   return updatedTalker;
 }
@@ -51,7 +53,7 @@ async function deleteTalker(id) {
   const oldTalkers = await readTalker();
   const newTalkers = oldTalkers.filter((talker) => talker.id === id);
   const updatedData = JSON.stringify(newTalkers);
-  await fs.writeFile(path.resolve(__dirname, '../talker.json'), updatedData);
+  await fs.writeFile(path.resolve(__dirname, DATA_PATH), updatedData);
 }
 
 module.exports = {
