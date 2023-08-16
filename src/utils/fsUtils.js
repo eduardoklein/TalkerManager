@@ -51,7 +51,7 @@ async function editTalker(id, editedTalker) {
 
 async function deleteTalker(id) {
   const oldTalkers = await readTalker();
-  const newTalkers = oldTalkers.filter((talker) => talker.id === id);
+  const newTalkers = oldTalkers.filter((currentTalker) => currentTalker.id !== Number(id));
   const updatedData = JSON.stringify(newTalkers);
   await fs.writeFile(path.resolve(__dirname, DATA_PATH), updatedData);
 }
