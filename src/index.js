@@ -3,7 +3,8 @@ const { readTalker,
   findTalkerById, 
   tokenSender, 
   addTalker,
-  editTalker } = require('./utils/fsUtils');
+  editTalker,
+  deleteTalker } = require('./utils/fsUtils');
 const { 
   validateEmail, 
   validatePassword,   
@@ -80,6 +81,12 @@ validateRateValueOnPost,
   talkerToEdit.talk.rate = talk.rate;
   const talkerEdited = await editTalker(id, talkerToEdit);
   return res.status(200).json(talkerEdited);
+});
+
+app.delete('/talker/:id', validateToken, async (req, res) => {
+  const { id } = req.params;
+  await deleteTalker(id);
+  return res.status(204).json({ message: 'Pessoa palestrante deletade com sucesso' });
 });
 
 // não remova esse endpoint, e para o avaliador funcionar

@@ -47,10 +47,18 @@ async function editTalker(id, editedTalker) {
   return updatedTalker;
 }
 
+async function deleteTalker(id) {
+  const oldTalkers = await readTalker();
+  const newTalkers = oldTalkers.filter((talker) => talker.id === id);
+  const updatedData = JSON.stringify(newTalkers);
+  await fs.writeFile(path.resolve(__dirname, '../talker.json'), updatedData);
+}
+
 module.exports = {
     readTalker,
     findTalkerById,
     tokenSender,
     addTalker,
     editTalker,
+    deleteTalker,
 };
