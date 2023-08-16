@@ -5,7 +5,8 @@ const { readTalker,
   addTalker,
   editTalker,
   deleteTalker,
-  search } = require('./utils/fsUtils');
+  search,
+  patch } = require('./utils/fsUtils');
 const { 
   validateEmail, 
   validatePassword,   
@@ -17,7 +18,9 @@ const {
   validateDateFormat,
   validateRateOnPost,
   validateRateValueOnPost,
-  validateRateValueOnGet } = require('./utils/verificationMiddleware');
+  validateRateValueOnGet,
+  validateRateOnPatch,
+  validateRateValueOnPatch } = require('./utils/verificationMiddleware');
 
 const app = express();
 app.use(express.json());
@@ -29,7 +32,6 @@ app.get('/talker/search', validateToken, validateRateValueOnGet, async (req, res
   const nameSearch = req.query.q;
   const rateSearch = Number(req.query.rate);
   const result = await search(nameSearch, rateSearch);
-  console.log(result);
   return res.status(200).json(result);
  });
 
@@ -81,7 +83,6 @@ validateRateValueOnPost,
   const { id } = req.params;
   const { name, age, talk } = req.body;
   const talkerToEdit = await findTalkerById(id);
-  console.log(talkerToEdit);
   if (!talkerToEdit) {
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
@@ -97,6 +98,17 @@ app.delete('/talker/:id', validateToken, async (req, res) => {
   const { id } = req.params;
   await deleteTalker(id);
   return res.status(204).json({ message: 'Pessoa palestrante deletada com sucesso' });
+});
+
+app.patch('/talker/rate/:id', 
+validateToken, 
+validateRateOnPatch, 
+validateRateValueOnPatch, async (req, res) => {
+  const { id } = req.params;
+  const { rate } = req.body;
+  console.log(id, rate);
+  await patch(id, rate);
+  return res.status(204).json();
 });
 
 // não remova esse endpoint, e para o avaliador funcionar

@@ -58,20 +58,28 @@ async function deleteTalker(id) {
 
 async function search(name, rate) {
   const talkers = await readTalker();
-  console.log(name, rate);
   if (!rate) {
-    console.log('Entrei no !rate');
     const searchResult = talkers.filter((currentTalker) => currentTalker.name.includes(name));
     return searchResult;
   } if (!name) {
-    console.log('Entrei no !name');
     const searchResult = talkers.filter((currentTalker) => currentTalker.talk.rate === rate);
     return searchResult;
   }
-  console.log('Entrei no both');
   const searchResult = talkers.filter((currentTalker) => currentTalker.name.includes(name) 
   && currentTalker.talk.rate === rate);
   return searchResult;
+}
+
+async function patch(id, rate) {
+  const oldTalkers = await readTalker();
+  const newTalkers = oldTalkers.map((currentTalker) => {
+    if (currentTalker.id === Number(id)) {
+      return { ...currentTalker, talk: { ...currentTalker.talk, rate } };
+    }
+    return currentTalker;
+  });
+  const updatedData = JSON.stringify(newTalkers);
+  await fs.writeFile(path.resolve(__dirname, DATA_PATH), updatedData);
 }
 
 module.exports = {
@@ -82,4 +90,5 @@ module.exports = {
     editTalker,
     deleteTalker,
     search,
+    patch,
 };

@@ -105,17 +105,29 @@ const validateRateValueOnPost = (req, res, next) => {
 
 const validateRateValueOnGet = (req, res, next) => {
   const { rate } = req.query;
-  console.log(rate);
   if (!rate) {
-    console.log('Entrei no !rate do mid');
     return next();
   } 
   const rateAsNumber = Number(rate);
   if (rateAsNumber < 1 || rateAsNumber > 5 || !Number.isInteger(rateAsNumber)) {
-    console.log('Entrei no if de verificação do mid');
   return res.status(400).send({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
   }
-  console.log('Entrei no Next');
+  return next();
+};
+
+const validateRateOnPatch = (req, res, next) => {
+  const { rate } = req.body;
+  if (rate || rate === 0) {
+    return next();
+  }
+  return res.status(400).send({ message: 'O campo "rate" é obrigatório' });
+};
+
+const validateRateValueOnPatch = (req, res, next) => {
+  const { rate } = req.body;
+  if (rate < 1 || rate > 5 || !Number.isInteger(rate)) {
+  return res.status(400).send({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
+  }
   return next();
 };
 
@@ -131,4 +143,6 @@ module.exports = {
   validateRateOnPost,
   validateRateValueOnPost,
   validateRateValueOnGet,
+  validateRateOnPatch,
+  validateRateValueOnPatch,
 };
