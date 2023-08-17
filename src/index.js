@@ -22,11 +22,31 @@ const {
   validateRateOnPatch,
   validateRateValueOnPatch } = require('./utils/verificationMiddleware');
 
+  const connection = require('./db/connection'); 
+
 const app = express();
 app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
 const PORT = process.env.PORT || '3001';
+
+app.get('/talker/db', async (req, res) => {
+  const [rows] = await connection.query('SELECT * FROM talkers');
+  console.log(rows);
+  const talkers = rows.map((row) => ({
+    name: row.name,
+    age: row.age,
+    id: row.id,
+    talk: {
+      watchedAt: row.talk_watched_at,
+      rate: row.talk_rate,
+    },
+  }));
+  if (!rows) {
+    res.status(200).json([]);
+  }
+  res.status(200).json(talkers);
+});
 
 app.get('/talker/search', validateToken, validateRateValueOnGet, async (req, res) => {
   const nameSearch = req.query.q;
@@ -116,6 +136,11 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log('Online');
+
+  const [result] = await connection.execute('SELECT 1');
+  if (result) {
+    console.log('MySQL connection OK');
+  }
 });
